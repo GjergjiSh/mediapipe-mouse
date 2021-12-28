@@ -1,11 +1,12 @@
 import cv2
 import mediapipe as mp
 import math
+import Utils as utils
 
 class HandDetector():
     detection_confidence : float
     track_confidence : float
-    
+
     max_hands : int
     hand : mp.solutions.hands.Hands
 
@@ -18,7 +19,7 @@ class HandDetector():
 
     def __init__(self, detection_confidence=0.5, track_confidence=0.2, click_distance=25) -> None:
         self.max_hands = 1
-        self.click_distance = click_distance        
+        self.click_distance = click_distance
 
         self.detection_confidence = detection_confidence
         self.track_confidence = track_confidence
@@ -35,7 +36,7 @@ class HandDetector():
         self.line_thickness = 8
         self.dot_thickness = 5
 
-    def click_detected(self, img, draw_line=True, draw_all_landmarks=False) -> bool:
+    def click_detected(self, img, draw_line=True, draw_all_landmarks=True) -> bool:
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         results = self.hand.process(img_rgb)
         hand_landmark_list = []
@@ -48,7 +49,7 @@ class HandDetector():
             for id, lm in enumerate(hand.landmark):
                 cx, cy = int(lm.x*w), int(lm.y*h)
                 hand_landmark_list.append([id, cx, cy])
-            
+
             if (len(hand_landmark_list) != 0):
 
                 # thumb coordiantes
@@ -60,26 +61,28 @@ class HandDetector():
 
                 finger_distance = math.hypot(l_x1-l_x3, l_y1-l_y3)
 
-                if draw_line:
-                    cv2.circle(img, (l_x1,l_y1), self.dot_thickness, self.dot_color, cv2.FILLED)
-                    cv2.circle(img, (l_x3,l_y3), self.dot_thickness, self.dot_color, cv2.FILLED)
+                if draw_all_landmarks:
+                        utils.draw_hand_landmarks(img, results)
 
-                    cv2.line(img, (l_x1,l_y1), (l_x3,l_y3), self.line_color, self.line_thickness)
+
+                if draw_line:
+                    utils.draw_circle(img, (l_x1,l_y1), utils.BLUE, 8)
+                    utils.draw_circle(img, (l_x3,l_y3), utils.BLUE, 8)
+                    utils.draw_line(img, (l_x1,l_y1), (l_x3,l_y3), utils.WHITE, 3)
 
                     if finger_distance < self.click_distance:
-                        cv2.circle(img, (cx,cy), self.dot_thickness, (0,255,0), cv2.FILLED)
-
-                if draw_all_landmarks:
-                    self.draw_all_lms(img, results)
-            
-                return True
+                        utils.draw_circle(img, (cx,cy), utils.RED, 8)
+                        return True
+                    else:
+                        utils.draw_circle(img, (cx,cy), utils.GREEN, 8)
+                        return False
         else:
             return False
 
     def draw_all_lms(self, img, results) -> None:
         for hand_lms in results.multi_hand_landmarks:
             mp.solutions.drawing_utils.draw_landmarks(
-                img, 
-                hand_lms, 
+                img,
+                hand_lms,
                 mp.solutions.hands.HAND_CONNECTIONS
              )
