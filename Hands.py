@@ -26,7 +26,7 @@ class HandDetector():
             min_tracking_confidence=self.track_confidence
         )
 
-    def click_detected(self, img, draw_line=True, draw_all_landmarks=True) -> bool:
+    def click_detected(self, img, draw_line=True, draw_all_landmarks=True) -> tuple:
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         results = self.hand.process(img_rgb)
         hand_landmark_list = []
@@ -62,13 +62,13 @@ class HandDetector():
 
                     if finger_distance < self.click_distance:
                         utils.draw_circle(img, (cx,cy), utils.RED, 8)
-                        return True
+                        return (cx, cy, True)
                     else:
                         utils.draw_circle(img, (cx,cy), utils.GREEN, 8)
-                        return False
+                        return (cx, cy, False)
         else:
-            print('No Handlandmars found')
-            return False
+            #print('No Handlandmars found')
+            return (None, None, False)
 
     def draw_all_lms(self, img, results) -> None:
         for hand_lms in results.multi_hand_landmarks:
