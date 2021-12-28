@@ -10,11 +10,6 @@ class HandDetector():
     max_hands : int
     hand : mp.solutions.hands.Hands
 
-    line_color : tuple
-    dot_color : tuple
-    line_thickness : float
-    dot_thickness : float
-
     click_distance : float
 
     def __init__(self, detection_confidence=0.5, track_confidence=0.2, click_distance=25) -> None:
@@ -30,11 +25,6 @@ class HandDetector():
             min_detection_confidence=self.detection_confidence,
             min_tracking_confidence=self.track_confidence
         )
-
-        self.dot_color = (0,150,255)
-        self.line_color = (124,55,174)
-        self.line_thickness = 8
-        self.dot_thickness = 5
 
     def click_detected(self, img, draw_line=True, draw_all_landmarks=True) -> bool:
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
@@ -77,6 +67,7 @@ class HandDetector():
                         utils.draw_circle(img, (cx,cy), utils.GREEN, 8)
                         return False
         else:
+            print('No Handlandmars found')
             return False
 
     def draw_all_lms(self, img, results) -> None:
@@ -84,5 +75,4 @@ class HandDetector():
             mp.solutions.drawing_utils.draw_landmarks(
                 img,
                 hand_lms,
-                mp.solutions.hands.HAND_CONNECTIONS
-             )
+                mp.solutions.hands.HAND_CONNECTIONS)
