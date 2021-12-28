@@ -5,6 +5,7 @@ GREEN = (0,255,0)
 RED = (0,0,255)
 BLUE = (255,0,0)
 WHITE = (255,255,255)
+PURPLE = (255,0,255)
 
 
 def draw_line(img, p1 , p2,  color, thickness) -> None:
@@ -19,5 +20,7 @@ def draw_hand_landmarks(img, results) -> None:
         mp.solutions.drawing_utils.draw_landmarks(
             img,
             hand_lms,
-            mp.solutions.hands.HAND_CONNECTIONS
-        )
+            mp.solutions.hands.HAND_CONNECTIONS)
+
+def draw_rectangle(img, p1,p2,color, thickness) -> None:
+    cv2.rectangle(img, p1,p2,color,thickness)
