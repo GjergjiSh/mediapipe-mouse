@@ -4,9 +4,6 @@ import math
 import Utils as utils
 
 class HandDetector():
-    detection_confidence : float
-    track_confidence : float
-
     max_hands : int
     hand : mp.solutions.hands.Hands
 
@@ -16,17 +13,14 @@ class HandDetector():
         self.max_hands = 1
         self.click_distance = click_distance
 
-        self.detection_confidence = detection_confidence
-        self.track_confidence = track_confidence
-
         self.mp_hand_solution = mp.solutions.hands
         self.hand = mp.solutions.hands.Hands(
             max_num_hands=self.max_hands,
-            min_detection_confidence=self.detection_confidence,
-            min_tracking_confidence=self.track_confidence
+            min_detection_confidence=detection_confidence,
+            min_tracking_confidence=track_confidence
         )
 
-    def click_detected(self, img, draw_line=True, draw_all_landmarks=True) -> tuple:
+    def track_fingers(self, img, draw_line=True, draw_all_landmarks=True) -> tuple:
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         results = self.hand.process(img_rgb)
         hand_landmark_list = []
@@ -69,10 +63,3 @@ class HandDetector():
         else:
             #print('No Handlandmars found')
             return (None, None, False)
-
-    def draw_all_lms(self, img, results) -> None:
-        for hand_lms in results.multi_hand_landmarks:
-            mp.solutions.drawing_utils.draw_landmarks(
-                img,
-                hand_lms,
-                mp.solutions.hands.HAND_CONNECTIONS)
