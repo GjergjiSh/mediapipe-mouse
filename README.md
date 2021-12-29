@@ -1,7 +1,16 @@
-# Install Rust Compiler
+# Usage 
 
-https://www.rust-lang.org/tools/install
-Download from the link and follow the instructions. If you're in the virtual environment you will need to exit and restart your shell
+~~~
+python VirtualMouse.py 
+
+optional arguments:
+  -h, --help          show this help message and exit
+  -dvar --dvar        Set size of virtual control area relative to screen size
+  -svar --svar        Used to smoothen mouse movement. The higher the value, the smoother but slower
+                      movement of the mouse pointer
+  -verbose --verbose  Print Coordinates of mouse for debugging
+  -display --display  Turn video display on/off
+~~~
 
 # Install python Requirements
 
